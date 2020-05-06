@@ -18,7 +18,7 @@ The goals / steps of this project are the following:
 
 [image1]: ./plt.savefig(r'write_up_examples\example_each_class.jpg') "Each class"
 [image2]: ./write_up_examples\histogram_classes.jpg "Histogram"
-[image3]: ./examples/random_noise.jpg "Random Noise"
+[image3]: ./plt.savefig(r'write_up_examples\grayscale_class.jpg') "Grayscale"
 [image4]: ./examples/placeholder.png "Traffic Sign 1"
 [image5]: ./examples/placeholder.png "Traffic Sign 2"
 [image6]: ./examples/placeholder.png "Traffic Sign 3"
@@ -52,26 +52,25 @@ The following diagram shows a histogram of the number of training examples of ea
 
 #### 1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
 
-As a first step, I decided to convert the images to grayscale because ...
+Initially the only steps I completed was to normalise the data. BECAUSE
 
+Having tested a few passes of the network I found that I was getting very high variance. One way to deal with this would have been to increase the dataset. Instead I realised that most of the information about what a sign was is contained within the shapes of the sign I would convert to grayscale. This made a dramatic improvement. There are a number of ways to convert to grayscale, but a quick and computationally efficient way is to take an average of the 3 channels. Once I'd taken the average I needed to make sure that the shape was still correct.
+
+```python
+X_train = np.mean(X_train, axis=3)
+X_train = np.reshape(X_train, (n_train,32,32,1))
+
+```
 Here is an example of a traffic sign image before and after grayscaling.
-
-![alt text][image2]
-
-As a last step, I normalized the image data because ...
-
-I decided to generate additional data because ... 
-
-To add more data to the the data set, I used the following techniques because ... 
-
-Here is an example of an original image and an augmented image:
 
 ![alt text][image3]
 
-The difference between the original data set and the augmented data set is the following ... 
+As I managed to reach the required accuracy I did not decide to increase the training set. To improve performance further this would likely have been my next step. It may have allowed me to train a model with color and not have such a high variance. With augumentation I would have to be careful not use transformations (flip/rotation) that may turn one sign into another.
 
 
 #### 2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
+
+The base model was based on LeNet. The main changes I made were to add in four dropout layers. This was because in my experimentation I was finding there a large variance between the train and validation datasets. 
 
 My final model consisted of the following layers:
 
@@ -88,30 +87,101 @@ My final model consisted of the following layers:
 |						|												|
  
 
+#### 3. Model Training
 
-#### 3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
+The following tests outline the different training steps I took. 
 
-To train the model, I used an ....
+When running the output for the baseline model, by outputing the train accuracy, it's clear that the model is overfitting.For example- these are the baseline results after 10 epochs for the set up taken from the previous lessons. 
+
+Validation Accuracy = 0.723
+Train Accuracy = 0.958
+
+The below discussion covers some of the changes I made to try and improve the validation accuracy. 
+
+##### Improvement 1. Attempt to reduce overfitting
+- Add a dropout layer after the first and second convolution layer (after the relu) and after the first fully connected layer. Keep_prob = 0.5
+lr = 0.001
+batch size = 128
+
+EPOCH 10 ...
+Validation Accuracy = 0.630
+Train Accuracy = 0.788
+
+Still a lot of variance. Just seems to have brought both down. 
+
+##### Test 2. Add another layer of dropout after second fully connected layer.
+lr = 0.001
+batch size = 128
+
+EPOCH 10 ...
+Validation Accuracy = 0.561
+Train Accuracy = 0.661
+
+This has made it considerably worse. The variance is now less but the bias has gone up. 
+Looking at the trend it doesn't feel as though more epochs would particularly help/
+
+
+##### Test3. Reduce dropout to 0.6 keep and train for 15 epochs.
+lr = 0.001
+batch size = 128
+
+EPOCH 15 ...
+Validation Accuracy = 0.733
+Train Accuracy = 0.872
+
+It's getting better again but there's still a lot of variance. 
+
+
+##### Test 4. Lower the learning rate by factor of 10 to 0.0001
+lr = 0.0001
+batch size = 128
+EPOCH 25 ...
+Validation Accuracy = 0.404
+Train Accuracy = 0.544
+
+This obviously takes a lot longer to train and so hasn't finished improving. 
+What id we did 100 epochs at this rate.
+
+EPOCH 100 ...
+Validation Accuracy = 0.678
+Train Accuracy = 0.848
+
+Still a high variance. 
+
+
+##### Test 5 Grayscale
+
+- Still a variance problem - maybe i need more data? Augmentation?
+- Could going greyscale help? There isn't a great deal of color variation anyway and the shape changes are the most important.
+- Go for a learning rate somewhere in the middle of the two so it doens't take so long?
+lr = 0.001
+batch size = 128
+Test 5 is grayscale 
+
+EPOCH 10 ...
+Validation Accuracy = 0.929
+Train Accuracy = 0.969
+
+This made a massive difference. We're nearly at the required spec level. 
+
+
+##### Test 6 Increase epochs
+lr = 0.001
+batch size = 128
+To try and get over the 93% validation I'm going to increase the epochs to 20.
+
+EPOCH 20 ...
+Validation Accuracy = 0.941
+Train Accuracy = 0.986
 
 #### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
 My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ? 
-* test set accuracy of ?
+* training set accuracy of 0.986
+* validation set accuracy of 0.941
+* test set accuracy of 0.906
 
-If an iterative approach was chosen:
-* What was the first architecture that was tried and why was it chosen?
-* What were some problems with the initial architecture?
-* How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to overfitting or underfitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
-* Which parameters were tuned? How were they adjusted and why?
-* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
-
-If a well known architecture was chosen:
-* What architecture was chosen?
-* Why did you believe it would be relevant to the traffic sign application?
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
- 
+The steps taken to achieve this is outlined in part 3.  
 
 ### Test a Model on New Images
 
