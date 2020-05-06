@@ -15,15 +15,15 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./plt.savefig(r'write_up_examples\example_each_class.jpg') "Each class"
+[image1]: ./write_up_examples\example_each.jpg "Each class"
 [image2]: ./write_up_examples\histogram_classes.jpg "Histogram"
-[image3]: ./plt.savefig(r'write_up_examples\grayscale_class.jpg') "Grayscale"
+[image3]: ./write_up_examples\grayscale_class.jpg  "Grayscale"
 
 [image4]: ./Additional_test_images/add_image_1.jpg "Traffic Sign 1"
 [image5]: ./Additional_test_images/add_image_2.jpg "Traffic Sign 2"
-[image6]: ./Additional_test_images/add_image_3.png "Traffic Sign 3"
+[image6]: ./Additional_test_images/add_image_3.jpg "Traffic Sign 3"
 [image7]: ./Additional_test_images/add_image_4.png "Traffic Sign 4"
-[image8]: ./Additional_test_images/add_image_5.jpg "Traffic Sign 5"
+[image8]: ./Additional_test_images/add_image_5.png "Traffic Sign 5"
 
 ---
 
@@ -226,43 +226,43 @@ This is obviously too small a sample to make significant judgement on, but the l
 
 ![alt text][image4] 
 
-Pred 0, Speed limit (60km/h), probability 0.972
-Pred 1, Speed limit (80km/h), probability 0.0164
-Pred 2, Speed limit (50km/h), probability 0.0117
-Pred 3, Ahead only, probability 1.78e-05
-Pred 4, No passing for vehicles over 3.5 metric tons, probability 2.05e-06
+-Pred 0, Speed limit (60km/h), probability 0.972
+-Pred 1, Speed limit (80km/h), probability 0.0164
+-Pred 2, Speed limit (50km/h), probability 0.0117
+-Pred 3, Ahead only, probability 1.78e-05
+-Pred 4, No passing for vehicles over 3.5 metric tons, probability 2.05e-06
 
 ![alt text][image5] 
 
-Pred 0, Speed limit (20km/h), probability 0.279
-Pred 1, Ahead only, probability 0.223
-Pred 2, Children crossing, probability 0.136
-Pred 3, Speed limit (60km/h), probability 0.127
-Pred 4, Go straight or right, probability 0.080
+-Pred 0, Speed limit (20km/h), probability 0.279
+-Pred 1, Ahead only, probability 0.223
+-Pred 2, Children crossing, probability 0.136
+-Pred 3, Speed limit (60km/h), probability 0.127
+-Pred 4, Go straight or right, probability 0.080
 
 ![alt text][image6] 
 
-Pred 0, General caution, probability 0.998
-Pred 1, Pedestrians, probability 0.0012
-Pred 2, Traffic signals, probability 0.000587
-Pred 3, Right-of-way at the next intersection, probability 4.077e-05
-Pred 4, Road narrows on the right, probability 9.278e-07
+-Pred 0, General caution, probability 0.998
+-Pred 1, Pedestrians, probability 0.0012
+-Pred 2, Traffic signals, probability 0.000587
+-Pred 3, Right-of-way at the next intersection, probability 4.077e-05
+-Pred 4, Road narrows on the right, probability 9.278e-07
 
 ![alt text][image7] 
 
-Pred 0, Speed limit (60km/h), probability 0.218
-Pred 1, Speed limit (80km/h), probability 0.102
-Pred 2, Road work, probability 0.0893
-Pred 3, Children crossing, probability 0.0707
-Pred 4, Bicycles crossing, probability 0.0524
+-Pred 0, Speed limit (60km/h), probability 0.218
+-Pred 1, Speed limit (80km/h), probability 0.102
+-Pred 2, Road work, probability 0.0893
+-Pred 3, Children crossing, probability 0.0707
+-Pred 4, Bicycles crossing, probability 0.0524
 
 ![alt text][image8]
 
-Pred 0, Speed limit (60km/h), probability 0.174
-Pred 1, Speed limit (80km/h), probability 0.126
-Pred 2, Road work, probability 0.0766
-Pred 3, Speed limit (120km/h), probability 0.0682
-Pred 4, Children crossing, probability 0.0449
+-Pred 0, Speed limit (60km/h), probability 0.174
+-Pred 1, Speed limit (80km/h), probability 0.126
+-Pred 2, Road work, probability 0.0766
+-Pred 3, Speed limit (120km/h), probability 0.0682
+-Pred 4, Children crossing, probability 0.0449
 
 
 
