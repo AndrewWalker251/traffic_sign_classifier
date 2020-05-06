@@ -6,24 +6,24 @@
 **Build a Traffic Sign Recognition Project**
 
 The goals / steps of this project are the following:
-* Load the data set (see below for links to the project data set)
+* Load the data set
 * Explore, summarize and visualize the data set
 * Design, train and test a model architecture
 * Use the model to make predictions on new images
 * Analyze the softmax probabilities of the new images
 * Summarize the results with a written report
 
-
 [//]: # (Image References)
 
 [image1]: ./plt.savefig(r'write_up_examples\example_each_class.jpg') "Each class"
 [image2]: ./write_up_examples\histogram_classes.jpg "Histogram"
 [image3]: ./plt.savefig(r'write_up_examples\grayscale_class.jpg') "Grayscale"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
+
+[image4]: ./Additional_test_images/add_image_1.jpg "Traffic Sign 1"
+[image5]: ./Additional_test_images/add_image_2.jpg "Traffic Sign 2"
+[image6]: ./Additional_test_images/add_image_3.png "Traffic Sign 3"
+[image7]: ./Additional_test_images/add_image_4.png "Traffic Sign 4"
+[image8]: ./Additional_test_images/add_image_5.jpg "Traffic Sign 5"
 
 ---
 
@@ -44,15 +44,15 @@ Here is an exploratory visualization of the data set. The first image shows a ra
 
 ![alt text][image1]
 
-The following diagram shows a histogram of the number of training examples of each class. There is significant variation but each one contains at least about 200 examples in the training set. 
+The following diagram shows a histogram of the number of training examples of each class. There is significant variation but each one contains at least ~200 examples in the training set. 
 
 ![alt text][image2]
 
 ### Design and Test a Model Architecture
 
-#### 1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
+#### 1. Data Preparation
 
-Initially the only steps I completed was to normalise the data. BECAUSE
+Initially the only steps I completed was to normalise the data. This improves the networks ability to learn. 
 
 Having tested a few passes of the network I found that I was getting very high variance. One way to deal with this would have been to increase the dataset. Instead I realised that most of the information about what a sign was is contained within the shapes of the sign I would convert to grayscale. This made a dramatic improvement. There are a number of ways to convert to grayscale, but a quick and computationally efficient way is to take an average of the 3 channels. Once I'd taken the average I needed to make sure that the shape was still correct.
 
@@ -61,14 +61,14 @@ X_train = np.mean(X_train, axis=3)
 X_train = np.reshape(X_train, (n_train,32,32,1))
 
 ```
-Here is an example of a traffic sign image before and after grayscaling.
+Here is an example of the effects of greyscale.
 
 ![alt text][image3]
 
-As I managed to reach the required accuracy I did not decide to increase the training set. To improve performance further this would likely have been my next step. It may have allowed me to train a model with color and not have such a high variance. With augumentation I would have to be careful not use transformations (flip/rotation) that may turn one sign into another.
+As I managed to reach the required accuracy I did not decide to increase the training set. To improve performance further this would likely have been my next step. It may have allowed me to train a model with color and not have such a high variance. With augumentation I would have to be careful to not use transformations (flip/rotation) that may turn one sign into another.
 
 
-#### 2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
+#### 2.  Model Architecture
 
 The base model was based on LeNet. The main changes I made were to add in four dropout layers. This was because in my experimentation I was finding there a large variance between the train and validation datasets. 
 
@@ -76,16 +76,23 @@ My final model consisted of the following layers:
 
 | Layer         		|     Description	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
+| Input         		| 32x32x1 Grayscale image   					| 
+| Convolution 5x5     	| 1x1 stride, valid padding						|
 | RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
-|						|												|
- 
+| Dropout				| keep_prob = 0.6								|
+| Max pooling	      	| 2x2 stride =2  								|
+| Convolution 5x5     	| 1x1 stride, valid padding						|
+| RELU					|												|
+| Dropout				| keep_prob = 0.6								|
+| Max pooling	      	| 2x2 stride =2  								|
+| Fully connected		| 400-120     									|
+| RELU					|												|
+| Dropout				| keep_prob = 0.6								|
+| Fully connected		| 120 -84     									|
+| RELU					|												|
+| Dropout				| keep_prob = 0.6								|
+| Fully connected		| 84 - 43    									|
+
 
 #### 3. Model Training
 
@@ -98,8 +105,9 @@ Train Accuracy = 0.958
 
 The below discussion covers some of the changes I made to try and improve the validation accuracy. 
 
-##### Improvement 1. Attempt to reduce overfitting
-- Add a dropout layer after the first and second convolution layer (after the relu) and after the first fully connected layer. Keep_prob = 0.5
+##### Test 1. Attempt to reduce overfitting
+Added a dropout layer after the first and second convolution layer (after the relu) and after the first fully connected layer. 
+Keep_prob = 0.5
 lr = 0.001
 batch size = 128
 
@@ -110,6 +118,7 @@ Train Accuracy = 0.788
 Still a lot of variance. Just seems to have brought both down. 
 
 ##### Test 2. Add another layer of dropout after second fully connected layer.
+Keep_prob = 0.5
 lr = 0.001
 batch size = 128
 
@@ -118,7 +127,7 @@ Validation Accuracy = 0.561
 Train Accuracy = 0.661
 
 This has made it considerably worse. The variance is now less but the bias has gone up. 
-Looking at the trend it doesn't feel as though more epochs would particularly help/
+Looking at the trend it doesn't feel as though more epochs could help.
 
 
 ##### Test3. Reduce dropout to 0.6 keep and train for 15 epochs.
@@ -131,7 +140,6 @@ Train Accuracy = 0.872
 
 It's getting better again but there's still a lot of variance. 
 
-
 ##### Test 4. Lower the learning rate by factor of 10 to 0.0001
 lr = 0.0001
 batch size = 128
@@ -140,7 +148,6 @@ Validation Accuracy = 0.404
 Train Accuracy = 0.544
 
 This obviously takes a lot longer to train and so hasn't finished improving. 
-What id we did 100 epochs at this rate.
 
 EPOCH 100 ...
 Validation Accuracy = 0.678
@@ -151,9 +158,8 @@ Still a high variance.
 
 ##### Test 5 Grayscale
 
-- Still a variance problem - maybe i need more data? Augmentation?
-- Could going greyscale help? There isn't a great deal of color variation anyway and the shape changes are the most important.
-- Go for a learning rate somewhere in the middle of the two so it doens't take so long?
+Still a variance problem - maybe I need more data? Augmentation?
+There isn't a great deal of color variation and the shape changes are the most important so worth testing greyscale.
 lr = 0.001
 batch size = 128
 Test 5 is grayscale 
@@ -174,7 +180,7 @@ EPOCH 20 ...
 Validation Accuracy = 0.941
 Train Accuracy = 0.986
 
-#### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
+#### 4. Final Results
 
 My final model results were:
 * training set accuracy of 0.986
@@ -185,48 +191,78 @@ The steps taken to achieve this is outlined in part 3.
 
 ### Test a Model on New Images
 
-#### 1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
-
+#### 1. Additional web images
 Here are five German traffic signs that I found on the web:
 
 ![alt text][image4] ![alt text][image5] ![alt text][image6] 
 ![alt text][image7] ![alt text][image8]
 
-The first image might be difficult to classify because ...
+The images are all clear with a simple white background and therefore I would expect them to be fairly easy to classify.
 
-#### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
+#### 2. Discussion on additional data
 
-Here are the results of the prediction:
+The accuracy on these additional images is only 40%. (2/5 are predicted correctly). This is interesting for a couple of reasons. The two that it got correct (speed limit and general caution) had 1260 and 1080 examples in the training data. The three that it got wrong had 0, 180 and 300 examples in the training set. 
+
+This shows that using accuracy as a metric is not always the best thing to do. It may be hiding poor performance of classes with fewer examples. 
+
+What is at least encouraging is that the ones it got wrong it had a very low confidence level for. 
+
+Adding an additional road sign into this test that was not one of the 43 classes also shows the importance of having to consider how the model will manage with signs it has not seen before.
+
+Here are the results of the prediction for the 5 additonal images:
 
 | Image			        |     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| Speed limit (60km/h)  | Speed limit (60km/h)							| 
+| Two way road    		| Speed limit (20km/h) 							|
+| General caution		| General caution								|
+| Dangerous curve left	| Speed limit (60km/h)							|
+| Roundabout mandatory	| Speed limit (60km/h)     						|
+
+This is obviously too small a sample to make significant judgement on, but the learnings above suggest additional metrics and data augmentation of additonal data on the classes with few examples.
 
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+#### 3. Model Perfornance on Additional images.
 
-#### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
+![alt text][image4] 
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+Pred 0, Speed limit (60km/h), probability 0.972
+Pred 1, Speed limit (80km/h), probability 0.0164
+Pred 2, Speed limit (50km/h), probability 0.0117
+Pred 3, Ahead only, probability 1.78e-05
+Pred 4, No passing for vehicles over 3.5 metric tons, probability 2.05e-06
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
+![alt text][image5] 
 
-| Probability         	|     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
+Pred 0, Speed limit (20km/h), probability 0.279
+Pred 1, Ahead only, probability 0.223
+Pred 2, Children crossing, probability 0.136
+Pred 3, Speed limit (60km/h), probability 0.127
+Pred 4, Go straight or right, probability 0.080
 
+![alt text][image6] 
 
-For the second image ... 
+Pred 0, General caution, probability 0.998
+Pred 1, Pedestrians, probability 0.0012
+Pred 2, Traffic signals, probability 0.000587
+Pred 3, Right-of-way at the next intersection, probability 4.077e-05
+Pred 4, Road narrows on the right, probability 9.278e-07
 
-### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
-#### 1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
+![alt text][image7] 
+
+Pred 0, Speed limit (60km/h), probability 0.218
+Pred 1, Speed limit (80km/h), probability 0.102
+Pred 2, Road work, probability 0.0893
+Pred 3, Children crossing, probability 0.0707
+Pred 4, Bicycles crossing, probability 0.0524
+
+![alt text][image8]
+
+Pred 0, Speed limit (60km/h), probability 0.174
+Pred 1, Speed limit (80km/h), probability 0.126
+Pred 2, Road work, probability 0.0766
+Pred 3, Speed limit (120km/h), probability 0.0682
+Pred 4, Children crossing, probability 0.0449
+
 
 
